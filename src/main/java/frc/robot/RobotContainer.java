@@ -6,10 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.RunAroundAndGoCrazyCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,12 +22,18 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
+  private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+
 
   private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    //Command Scheduler
+    CommandScheduler.getInstance().registerSubsystem(drivetrain);
+    CommandScheduler.getInstance().registerSubsystem(intake);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -36,7 +45,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new Button(controller::getLeftBumper).whileHeld(new RunAroundAndGoCrazyCommand(m_exampleSubsystem));
+    new Button(controller::getLeftBumper).whileHeld(new RunAroundAndGoCrazyCommand(exampleSubsystem));
   }
 
   /**
