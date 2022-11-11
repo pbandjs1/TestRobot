@@ -4,28 +4,48 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import org.usfirst.frc.team2910.robot.Robot;
-import org.usfirst.frc.team2910.robot.RobotMap;
-import org.usfirst.frc.team2910.robot.commands.GathererCommand;
-
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.WPI_AutoFeedEnable;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import javax.swing.text.Position;
 
-
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
+import static frc.robot.Constants.*;
 
 
 public class IntakeSubsystem extends SubsystemBase {
+  public static enum Position {
+    OUT,
+    IN
+  }
+
+  private TalonSRX leftIntake = new TalonSRX(INTAKE_LEFT_MOTOR);
+  private TalonSRX rightIntake = new TalonSRX(INTAKE_RIGHT_MOTOR);
+
+  private Solenoid rightSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, LEFT_SOLENOID);
+  private Solenoid leftSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, RIGHT_SOLENOID);
+
+  private double intakeSpeed = 0.0;
 
   public IntakeSubsystem() {
 
 
+    // right side is inverted
+    rightIntake.setInverted(true);
+    leftIntake.setInverted(false);
+  }
+
+  @Override
+  public void periodic() {
+    rightIntake.set(TalonSRXControlMode.PercentOutput, intakeSpeed);
+    leftIntake.set(TalonSRXControlMode.PercentOutput, intakeSpeed);
   }
 
   public void setLeftArm(Position position) {
@@ -36,10 +56,9 @@ public class IntakeSubsystem extends SubsystemBase {
     rightSolenoid.set(position == Position.IN);
   }
 
-  public void activateIntake(double out, double rot) {
-    intakeDriver.arcadeDrove(out, rot);
+  public void setIntakeSpeed(double intakeSpeed) {
+    this.intakeSpeed = intakeSpeed;
   }
-
 
 
 
